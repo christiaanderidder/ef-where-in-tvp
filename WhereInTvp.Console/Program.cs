@@ -1,19 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-using Microsoft.EntityFrameworkCore;
 using WhereInTvp.Console;
 
-await using var db = new BloggingContext();
+using var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((_, services) =>
+    {
+        services
+            .AddScoped<Application>()
+            .AddDbContext<BloggingContext>();
+    })
+    .Build();
 
-var ids = new[] {1, 2};
-
-var blogs = await db.Blogs
-    .Where(b => ids.Contains(b.BlogId))
-    .ToListAsync();
-
-foreach (var blog in blogs)
-{
-    Console.WriteLine(blog.Url);
-}
-
-Console.ReadKey();
+var app = host.Services.GetRequiredService<Application>();
+await app.RunAsync();
