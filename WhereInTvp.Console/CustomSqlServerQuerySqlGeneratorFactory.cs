@@ -4,11 +4,15 @@ namespace WhereInTvp.Console;
 
 public class CustomSqlServerQuerySqlGeneratorFactory : IQuerySqlGeneratorFactory
 {
-    public CustomSqlServerQuerySqlGeneratorFactory(QuerySqlGeneratorDependencies dependencies) =>
-        _dependencies = dependencies;
+    private readonly RelationalMethodCallTranslatorProviderDependencies _methodCallTranslatorProviderDependencies;
+    private readonly QuerySqlGeneratorDependencies _sqlGeneratorDependencies;
 
-    private QuerySqlGeneratorDependencies _dependencies { get; }
+    public CustomSqlServerQuerySqlGeneratorFactory(RelationalMethodCallTranslatorProviderDependencies methodCallTranslatorProviderDependencies, QuerySqlGeneratorDependencies sqlGeneratorDependencies)
+    {
+        _methodCallTranslatorProviderDependencies = methodCallTranslatorProviderDependencies;
+        _sqlGeneratorDependencies = sqlGeneratorDependencies;
+    }
 
     public virtual QuerySqlGenerator Create()
-        => new CustomSqlServerQuerySqlGenerator(_dependencies);
+        => new CustomSqlServerQuerySqlGenerator(_methodCallTranslatorProviderDependencies.SqlExpressionFactory, _sqlGeneratorDependencies);
 }
